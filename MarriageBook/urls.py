@@ -21,4 +21,5 @@ admin.site.site_header = '姻缘簿'
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('', admin.site.urls)
 ]
