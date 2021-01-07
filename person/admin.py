@@ -10,7 +10,6 @@ from .models import *
 from import_export import resources
 from import_export.admin import ImportExportModelAdmin, ImportExportActionModelAdmin
 
-
 class BirthdayListFilter(admin.SimpleListFilter):
     title = u'最近生日'
     parameter_name = 'ages'
