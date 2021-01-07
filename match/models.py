@@ -1,3 +1,4 @@
+import datetime
 from django.db import models
 
 
@@ -10,6 +11,8 @@ class Match(models.Model):
     b_uid = models.ForeignKey('person.Person', on_delete=models.CASCADE, related_name='b_user', verbose_name='对象B的昵称')
     #  匹配时间
     match_time = models.DateField(auto_now_add=True, verbose_name='匹配时间')
+    #  更新时间
+    #  update_time2 = models.DateField(verbose_name='变化时间', editable=True, default=datetime.date.today())
     #  恋爱状态
     status_choices = (
         (0, '初识'),

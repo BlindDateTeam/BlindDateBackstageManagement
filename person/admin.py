@@ -25,11 +25,9 @@ class BirthdayListFilter(admin.SimpleListFilter):
     def queryset(self, request, queryset):
         # 当前日期格式
         cur_date = datetime.datetime.now().date()
-
         if self.value() == '0':
             # 前一天日期
-            day = cur_date - datetime.timedelta(days=1)
-
+            day = cur_date - datetime.timedelta(days=7)
             return queryset.filter(birthday__gte=day)
         if self.value() == '1':
             day = cur_date - datetime.timedelta(days=15)

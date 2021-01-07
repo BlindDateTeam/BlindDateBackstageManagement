@@ -1,6 +1,5 @@
+import datetime
 from django.db import models
-import markdown
-from mdeditor.fields import MDTextField
 
 
 class Article(models.Model):
@@ -9,7 +8,9 @@ class Article(models.Model):
     #  用户ID
     uid = models.ForeignKey('person.Person', verbose_name='作者', on_delete=models.CASCADE)
     #  发表时间
-    article_time = models.DateTimeField(verbose_name='更新时间', editable=True)
+    article_time = models.DateTimeField(verbose_name='发表时间', editable=True)
+    #  更新时间
+    #  update_time1 = models.DateTimeField(verbose_name='更新时间', editable=True, null=True, default=datetime.datetime.now())
     #  标题
     title = models.CharField(max_length=255, verbose_name='标题')
     #  文章内容

@@ -6,27 +6,37 @@ from django.http import JsonResponse
 
 class MatchListFilter(admin.SimpleListFilter):
     title = u'最近配对'
-    parameter_name = 'match_days'
+    parameter_name = 'match_time'
 
     def lookups(self, request, model_admin):
         return (
-            ('0', u'最近7天'),
-            ('1', u'最近15天'),
-            ('2', u'最近30天'),
+            ('0', u'当日'),
+            ('1', u'最近7天'),
+            ('2', u'最近15天'),
+            ('3', u'最近30天'),
+            ('4', u'2020年'),
+            ('5', u'2019年及以前'),
         )
 
     def queryset(self, request, queryset):
         #  当前日期格式
-        cur_date = datetime.datetime.now().date()
+        cur_date = datetime.date.today()
         if self.value() == '0':
-            day = cur_date - datetime.timedelta(days=7)
-            return queryset.filter(match_time=day)
+            day = cur_date - datetime.timedelta(days=0)
+            return Match.objects.filter(match_time__gte=day)
         if self.value() == '1':
-            day = cur_date - datetime.timedelta(days=15)
-            return queryset.filter(match_time=day)
+            day = cur_date - datetime.timedelta(days=7)
+            return Match.objects.filter(match_time__gte=day)
         if self.value() == '2':
+            day = cur_date - datetime.timedelta(days=15)
+            return Match.objects.filter(match_time__gte=day)
+        if self.value() == '3':
             day = cur_date - datetime.timedelta(days=30)
-            return queryset.filter(match_time=day)
+            return Match.objects.filter(match_time__gte=day)
+        if self.value() == '4':
+            return Match.objects.filter(match_time__year=2020)
+        if self.value() == '5':
+            return Match.objects.filter(match_time_year__lte=2019)
 
 
 @admin.register(Match)
@@ -61,6 +71,40 @@ class MatchAdmin(admin.ModelAdmin):
     layer_input.short_description = '更新'
     layer_input.type = 'success'
     layer_input_icon = 'el-icon-s-promotion'
+
+    layer_input.layer = {
+        'title': '配对信息更新',
+        'tips': '输入更新配对信息',
+        'confirm_button': '确认',
+        'cancel_button': '取消',
+        'width': '40%',
+        'labelWidth': '80px',
+        'params': [{
+            'type': 'number',
+            'key': 'input',
+            'label': 'A用户的ID',
+        }, {
+            'type': 'number',
+            'key': 'input',
+            'label': 'B用户的ID'
+        }, {
+            'type': 'date',
+            'key': 'date',
+            'label': '配对时间',
+        }, {
+            'type': 'select',
+            'key': 'type',
+            'label': '恋爱状态',
+            'value': '0',
+            'options': [{
+                'key': '0', 'label': '初识',
+            }, {
+                'key': '1', 'label': '牵手',
+            }, {
+                'key': '2', 'label': '失恋',
+            }]
+        }]
+    }
 
     def make_copy(self, request, queryset):
         match_ids = request.POST.getlist('_selected_action')

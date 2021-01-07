@@ -30,7 +30,7 @@ class Person(models.Model):
     hometown = models.CharField(max_length=255, verbose_name='家乡')
     #  学历
     education_choices = (
-        (0, ''),
+        (0, ' '),
         (1, '大专以下'),
         (2, '大专'),
         (3, '本科'),
@@ -45,7 +45,7 @@ class Person(models.Model):
     income = models.IntegerField(verbose_name='月收入')
     #  房产状态
     estate_choices = (
-        (0, ''),
+        (0, ' '),
         (1, '已购房'),
         (2, '和父母同居'),
         (3, '租房'),
@@ -54,7 +54,7 @@ class Person(models.Model):
     estate = models.IntegerField(choices=estate_choices, default=0, verbose_name='房产状况')
     # 婚姻状况
     marriage_choices = (
-        (0, ''),
+        (0, ' '),
         (1, '未婚'),
         (2, '离异'),
         (3, '丧偶'),

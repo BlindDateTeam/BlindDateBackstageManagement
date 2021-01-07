@@ -5,7 +5,6 @@ from django.http import JsonResponse
 
 from django.contrib import admin
 from activity.models import Activity
-from person.models import Person
 
 
 class UpdateListFilter(admin.SimpleListFilter):
@@ -18,21 +17,23 @@ class UpdateListFilter(admin.SimpleListFilter):
           ('0', '当日'),
           ('1', '最近1周'),
           ('2', '最近30天'),
+          ('3', '2020年及以前'),
         )
 
     def queryset(self, request, queryset):
         #  当前日期格式
         cur_date = datetime.datetime.now().date()
-
         if self.value() == '0':
             day = cur_date - datetime.timedelta(days=0)
-            return queryset.filter(a_time=day)
+            return Activity.objects.filter(a_time__gte=day)
         if self.value() == '1':
             day = cur_date - datetime.timedelta(days=7)
-            return queryset.filter(a_time=day)
+            return Activity.objects.filter(a_time__gte=day)
         if self.value() == '2':
             day = cur_date - datetime.timedelta(days=30)
-            return queryset.filter(a_time=day)
+            return Activity.objects.filter(a_time__gte=day)
+        if self.value() == '3':
+            return Activity.objects.filter(a_time__year__lte=2020)
 
 
 @admin.register(Activity)
@@ -42,6 +43,7 @@ class ActivityAdmin(admin.ModelAdmin):
 
     search_fields = ('uid__nickname',)
     list_filter = ('a_time', UpdateListFilter)
+    list_editable = ('a_time', )
 
     actions = ('layer_input', 'make_copy',)
 
@@ -64,6 +66,47 @@ class ActivityAdmin(admin.ModelAdmin):
     layer_input.short_description = '更新'
     layer_input.type = 'success'
     layer_input_icon = 'el-icon-s-promotion'
+
+    layer_input.layer = {
+        'title': '配对信息更新',
+        'tips': '输入更新配对信息',
+        'confirm_button': '确认',
+        'cancel_button': '取消',
+        'width': '40%',
+        'labelWidth': '80px',
+        'params': [{
+            'type': 'name',
+            'key': 'input',
+            'label': '用户',
+            'width': '300px',
+        }, {
+            'type': 'datetime',
+            'key': 'datetime',
+            'label': '发表时间',
+            'width': '300px',
+        }, {
+            'type': 'TextField',
+            'key': 'input',
+            'label': '内容',
+            'height': '400px',
+        }, {
+            'type': 'ImageField',
+            'key': 'upload',
+            'label': '动态附图1',
+        }, {
+            'type': 'ImageField',
+            'key': 'upload',
+            'label': '动态附图2',
+        }, {
+            'type': 'ImageField',
+            'key': 'upload',
+            'label': '动态附图3',
+        }, {
+            'type': 'ImageField',
+            'key': 'upload',
+            'label': '动态附图4',
+        }]
+    }
 
     def make_copy(self, request, queryset):
         a_ids = request.POST.getlist('_selected_action')

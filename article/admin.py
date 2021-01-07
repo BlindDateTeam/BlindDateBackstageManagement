@@ -15,23 +15,27 @@ class UpdateListFilter(admin.SimpleListFilter):
             ('0', '当日'),
             ('1', '最近1周'),
             ('2', '最近30天'),
+            ('3', '2020年'),
+            ('4', '2019年及以前'),
         )
 
     def queryset(self, request, queryset):
         #  当前日期格式
         cur_date = datetime.datetime.now().date()
-
         if self.value() == '0':
-            # 前一天日期
-            day = cur_date - datetime.timedelta(days=1)
-
-            return queryset.filter(birthday__gte=day)
+            #  日期选定
+            day = cur_date - datetime.timedelta(days=0)
+            return Article.objects.filter(article_time__gte=day)
         if self.value() == '1':
             day = cur_date - datetime.timedelta(days=7)
-            return queryset.filter(birthday__gte=day)
+            return Article.objects.filter(article_time__gte=day)
         if self.value() == '2':
             day = cur_date - datetime.timedelta(days=30)
-            return queryset.filter(birthday__gte=day)
+            return Article.objects.filter(article_time__gte=day)
+        if self.value() == '3':
+            return Article.objects.filter(article_time__year=2020)
+        if self.value() == '4':
+            return Article.objects.filter(article_time__year__lte=2019)
 
 
 @admin.register(Article)
@@ -63,6 +67,53 @@ class ArticleAdmin(admin.ModelAdmin):
     layer_input.short_description = '更新'
     layer_input.type = 'success'
     layer_input_icon = 'el-icon-s-promotion'
+
+    layer_input.layer = {
+        'title': '文章信息更新',
+        'tips': '更新文章信息',
+        'confirm_button': '确认',
+        'cancel_button': '取消',
+        'width': '40%',
+        'labelWidth': '80px',
+        'params': [{
+            'type': 'datetime',
+            'key': 'datetime',
+            'label': '更新时间',
+        }, {
+            'type': 'name',
+            'key': 'input',
+            'label': '文章标题',
+            'width': '300px',
+        }, {
+            'type': 'text',
+            'key': 'input',
+            'label': '文章内容',
+        }, {
+            'type': 'img',
+            'key': 'upload',
+            'label': '文章附图1',
+        }, {
+            'type': 'img',
+            'key': 'upload',
+            'label': '文章附图2',
+        }, {
+            'type': 'img',
+            'key': 'upload',
+            'label': '文章附图3',
+        }, {
+            'type': 'img',
+            'key': 'upload',
+            'label': '文章附图4',
+        }, {
+            'type': 'img',
+            'key': 'upload',
+            'label': '文章附图5',
+        }, {
+            'type': 'img',
+            'key': 'upload',
+            'label': '文章附图6',
+        }]
+    }
 
     def make_copy(self, request, queryset):
         article_ids = request.POST.getlist('_selected_action')
