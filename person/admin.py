@@ -166,6 +166,7 @@ class PersonAdmin(admin.ModelAdmin):
         }]
     }
 
+
     def make_copy(self, request, queryset):
         u_ids = request.POST.getlist('_selected_action')
         for uid in u_ids:
